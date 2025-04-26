@@ -1,0 +1,33 @@
+/* imort google font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+
+@theme {
+  /* custom color for tailwind 4.0. use-text-homepage-background */
+    --color-homepage-background: #9d1c95;
+    /* custom height, width for tailwind 4.0*/
+    --spacing-section-height: 500px;
+    --spacing-course-card-width: 424px;
+     /* custom font/text size for tailwind 4.0*/
+     --text-course-details-heading-small: 26px;
+     --text-course-details-heading-large: 44px;
+      /* custom shadow for tailwind 4.0*/
+    --shadow-custom-card-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 1);
+    
+  }
+
+
+/* custom font for global use using css not tailwind. root works for font * for  @apply transition */
+  :root {
+  font-family: "Roboto", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+  }
+
+  *{
+    @apply transition duration-400;
+  }

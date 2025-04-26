@@ -1,0 +1,10 @@
+# Node.js / Express
+node_modules/
+
+# Environment variables
+*.env
+*.md
+
+
+# don't ignore
+!.env.sample
