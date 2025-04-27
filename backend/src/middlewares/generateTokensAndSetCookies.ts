@@ -20,7 +20,8 @@ const generateTokensAndSetCookies = async (user: UsersDocument, res: Response) =
   
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure:true,
+      //secure: process.env.NODE_ENV === "production",
       // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       sameSite: process.env.NODE_ENV === "none" ,
     });
@@ -37,7 +38,8 @@ const generateTokensAndSetCookies = async (user: UsersDocument, res: Response) =
   
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure:true,
+      //secure: process.env.NODE_ENV === "production",
       //sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       sameSite: process.env.NODE_ENV === "none" ,
     });
