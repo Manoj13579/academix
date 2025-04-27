@@ -20,10 +20,8 @@ const generateTokensAndSetCookies = async (user: UsersDocument, res: Response) =
   
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure:true,
-      //secure: process.env.NODE_ENV === "production",
-      // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      sameSite: "none" ,
+      secure: true,
+      sameSite: "none",
     });
   
     const refreshToken = jwt.sign(
@@ -38,10 +36,8 @@ const generateTokensAndSetCookies = async (user: UsersDocument, res: Response) =
   
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure:true,
-      //secure: process.env.NODE_ENV === "production",
-      //sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      sameSite: "none" ,
+      secure: true,
+      sameSite: "none",
     });
   
     return { accessToken, refreshToken };

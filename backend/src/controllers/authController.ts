@@ -407,14 +407,14 @@ const logout = async (req:Request, res:Response) => {
       await Users.findOneAndUpdate({ refreshToken }, { refreshToken: null });
       res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", 
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        secure: true,
+        sameSite: "none",
         path: '/'
       });
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", 
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: true,
+      sameSite: "none",
         path: '/'
       });
         res.status(200).json({ success: true, message: "successfully logged out" });
