@@ -23,7 +23,7 @@ const generateTokensAndSetCookies = async (user: UsersDocument, res: Response) =
       secure:true,
       //secure: process.env.NODE_ENV === "production",
       // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      sameSite: process.env.NODE_ENV === "none" ,
+      sameSite: "none" ,
     });
   
     const refreshToken = jwt.sign(
@@ -41,7 +41,7 @@ const generateTokensAndSetCookies = async (user: UsersDocument, res: Response) =
       secure:true,
       //secure: process.env.NODE_ENV === "production",
       //sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      sameSite: process.env.NODE_ENV === "none" ,
+      sameSite: "none" ,
     });
   
     return { accessToken, refreshToken };

@@ -40,19 +40,6 @@ app.use(session({
   }));
   
 
-
-app.use(session({
-  secret: process.env.SESSION_SECRET_KEY!,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    maxAge: 24 * 60 * 60 * 1000,
-  },
-}));
-
   
 
   app.use(passport.initialize());
