@@ -5,12 +5,38 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-/* Refresh Queue Setup. if more than one api call from useEffect using axiosInstance need to handle refresh token as it will make another refreshRequest without finishing first and first already creates new refresh token in database so second will throw error */
+/* Refresh Queue Setup. if more than one api call from useEffect using functions  useEffect(() => {
+      userEnrolledCourses();
+      getUserCourseProgress();
+    }, []); both will execute independently. one will not wait for other to finish. axiosInstance need to handle refresh token as it will make another refreshRequest without finishing first and first already creates new refresh token in database so second will throw error. Refresh token should only be used once! Not twice in parallel.
+
+    You need to serialize the refresh operation — i.e., make sure only one refresh happens at a time even if multiple requests fail simultaneously. two axiosInstance in above useEffect will throw two 401 error but 1 refresh request need to be send. when refresh request gets new token no 401 error n both request now proceed.
+    isRefreshing = true when a refresh is happening.
+   While refresh is happening, if any other request gets 401, it waits (does not trigger another /refresh-request).
+  After refresh succeeds: It resends all requests waiting.
+
+
+this makees request wait
+if (isRefreshing) {
+  // Don't send another /refresh-request, just wait
+  return new Promise((resolve, reject) => {
+    failedQueue.push({ resolve, reject });
+  }).then(() => {
+    return axiosInstance(originalRequest); // Retry after refresh
+  });
+}
+Only the first request that sees 401 and !isRefreshing triggers the actual POST /refresh-request.
+The second request, which comes while the first is still refreshing, sees that isRefreshing === true, so it:
+Does not make another refresh request
+Just waits in failedQueue.Will automatically retry after the first refresh finishes
+*/
 
 /* Flag to indicate whether a token refresh request is in progress.
 let failedQueue: { resolve: (value?: any) => void; reject: (reason?: any) => void }[] = [];
 A queue to hold failed requests while a token is being refreshed.
-Each queue item is an object with resolve and reject to handle the Promise associated with each request. */
+Each queue item is an object with resolve and reject to handle the Promise associated with each request
+
+*/
 let isRefreshing = false;
 let failedQueue: { resolve: (value?: any) => void; reject: (reason?: any) => void }[] = [];
 
