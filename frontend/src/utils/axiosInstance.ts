@@ -1,37 +1,89 @@
 import axios from "axios";
 
-
 const axiosInstance = axios.create({
-  //set url here so no need to set in every axiosInstance in components
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 
+/* Refresh Queue Setup. if more than one api call from useEffect using axiosInstance need to handle refresh token as it will make another refreshRequest without finishing first and first already creates new refresh token in database so second will throw error */
+
+/* Flag to indicate whether a token refresh request is in progress.
+let failedQueue: { resolve: (value?: any) => void; reject: (reason?: any) => void }[] = [];
+A queue to hold failed requests while a token is being refreshed.
+Each queue item is an object with resolve and reject to handle the Promise associated with each request. */
+let isRefreshing = false;
+let failedQueue: { resolve: (value?: any) => void; reject: (reason?: any) => void }[] = [];
+
+/* Handles all queued requests: If a refresh failed, reject all queued requests with the error. If refresh succeeded, resolve all requests so they can retry. */
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// ---- Axios response interceptor ----
 axiosInstance.interceptors.response.use(
-   /* If the response is successful, return it as it is. also helpful in google login using session that has own token and expiry(long duration). won't interfer here coz token is long lived(in backend in session cookie expiry date is one day) and in every request it will be successful request */
   (response) => {
     return response;
   },
   async (error) => {
-    // Check if it's a 401 error.will get only this status from authenticateToken from backend if accessToken invalid.
-    if (error.response && error.response.status === 401) {
+    const originalRequest = error.config;
+
+    // If 401 and originalRequest has not retried yet
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If refresh already happening, push request to queue
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => {
+            // After refresh done, retry original request
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+/* If a refresh is already in progress, the request is queued to be retried once the refresh completes.
+      originalRequest._retry = true;
+      isRefreshing = true;
+Marks the request as retried to prevent loops.Sets isRefreshing to true to prevent other refresh attempts.
+ */
+      originalRequest._retry = true;
+      isRefreshing = true;
+
       try {
-        // Attempt to refresh token
+        // Try refresh token
         await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh-request`,
           {},
           { withCredentials: true }
         );
-        /*Retry the original request that failed or first request(error.config) which got error or 401. it will work if it got refresh token from await axios.post */
-        return axiosInstance(error.config);
+
+        processQueue(null);
+        return axiosInstance(originalRequest);
       } catch (err) {
-        console.error("Refresh token request failed:", err);
-        // If refresh fails (e.g., 401 or other error), reject the promise
-        // navigate to login handled in components since useNavigate can't be used here
+        /*If the refresh is successful:
+Process the queue with no error.
+Retry the original failed request.
+If refresh fails:
+Reject all queued requests.
+Reject the current request.
+Regardless of outcome, reset isRefreshing to false.*/
+        processQueue(err, null);
         return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
       }
     }
-    /*If the error is not a 401, reject the promise with the original error.Promise.reject stops flow of async operation */
+// If the error is not a 401 or already retried, just reject it.
+/* navigate to login handled in components since useNavigate can't be used here. works too if refreshed token expired take user to login */
     return Promise.reject(error);
   }
 );
