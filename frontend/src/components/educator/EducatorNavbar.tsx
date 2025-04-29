@@ -12,7 +12,7 @@ import { logout } from "../../store/authSlice";
 
 
 
-
+/* login to educator sets sessionStorage makes data in authslice change that runs getAllNotifications in user Navbar although EducatorNavbar is independent parent route for educator */
 const EducatorNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();

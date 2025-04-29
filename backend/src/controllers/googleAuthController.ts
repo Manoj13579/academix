@@ -13,7 +13,7 @@ passport.use(new OAuth2Strategy({
     
     scope: ['profile', 'email'],
     /* same url listed in google console for redirect. when google redirects to this url call callback mentioned below tells passport wher it will get data after successfull login. it invokes googleAuthCallback then. */
-    callbackURL: 'http://localhost:5000/api/auth/google/callback',
+    callbackURL: 'https://academix-backend-02p8.onrender.com/api/auth/google/callback',
     
 },
 
@@ -99,7 +99,11 @@ export const googleLogout = (req:Request, res:Response) => {
       }
   
     (req.session as any) = null;
-      res.clearCookie('connect.sid');
+    res.clearCookie('connect.sid', {
+        path: "/",
+        secure: true,
+        sameSite: "none",
+      });
       res.send({
         success: true,
         isAuth: req.isAuthenticated()
