@@ -6,24 +6,28 @@ import SideBar from "./SideBar";
 import EducatorFooter from "./EducatorFooter";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { UserType } from "../../types/UserType";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/Store";
+import { logout } from "../../store/authSlice";
 
 
 
 
 const EducatorNavbar = () => {
-  const storedUser = sessionStorage.getItem("user");
-    const user: UserType = storedUser ? JSON.parse(storedUser) : null;
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.data);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   
   const handleLogout = async () => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`, {}, { withCredentials: true});
       if(response.data.success) {
-      navigate('/login');
-      sessionStorage.removeItem('user');
+        dispatch(logout());
+        sessionStorage.removeItem('user');
+        navigate('/login');
       toast.success("successfully logged out");
       }
     } catch (error: any) {

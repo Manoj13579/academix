@@ -94,9 +94,9 @@ const handleLogout = async () => {
   try {
     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`, {}, { withCredentials: true});
     if(response.data.success) {
-    navigate('/login');
-    dispatch(logout());
-    sessionStorage.removeItem('user');
+      dispatch(logout());
+      sessionStorage.removeItem('user');
+      navigate('/login');
     toast.success("successfully logged out");
     }
   } catch (error: any) {
@@ -117,8 +117,8 @@ const handleGoogleLogout = async () =>{
       withCredentials: true
     });
     dispatch(logout());
-      sessionStorage.removeItem('user');
-      navigate('/login')
+    sessionStorage.removeItem('user');
+    navigate('/login')
       toast.success("logged out successfully")
     }
   catch (error) {
