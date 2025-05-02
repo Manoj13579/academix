@@ -92,7 +92,6 @@ export const purchaseCourse = async (req:Request, res:Response) => {
         const session = await stripe.checkout.sessions.create({   
             success_url:`${origin}/stripe-success`,
             cancel_url:`${origin}/stripe-cancel`,
-            payment_method_types:["card"],
             line_items:lineItems,
             mode:"payment",
             // metadata sent to stripe webhook endpoint should be string. stripe api expects it to be string
