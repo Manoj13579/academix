@@ -20,7 +20,6 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import GoogleLoginSuccess from "./pages/auth/GoogleLoginSuccess";
 import UserProfileEdit from "./pages/auth/UserProfileEdit";
 import AdminProfileEdit from "./pages/auth/AdminProfileEdit";
-import Test from "./pages/Test";
 import UserProtectedRoute from "./protectedRoute/UserProtectedRoute";
 import StripeSuccess from "./pages/student/StripeSuccess";
 import StripeCancel from "./pages/student/StripeCancell";
@@ -101,8 +100,7 @@ useEffect(() => {
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="google-login-success" element={<GoogleLoginSuccess />} />
         <Route path="stripe-success" element={<StripeSuccess />} />
-        <Route path="stripe-cancell" element={<StripeCancel/>} />
-        <Route path="/test" element={<Test />} />
+        <Route path="stripe-cancel" element={<StripeCancel/>} />
         <Route element = {<UserProtectedRoute />}>
         <Route path="course-detail-page/:_id" element={<CourseDetailPage />} />
         <Route path="my-enrollments-page" element={<MyEnrollmentsPage />} />

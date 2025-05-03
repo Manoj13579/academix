@@ -5,7 +5,6 @@ import { adminProfileEdit, deleteUser, forgotPassword,
     userProfileEdit,
     verificationCode, } from '../controllers/authController';
 import { authenticateToken, authorizeAdmin } from '../middlewares/authMiddleware';
-import eitherAuthMiddleware from '../middlewares/eitherAuthMiddleware';
 
 const authRoutes = express.Router();
 
@@ -22,9 +21,5 @@ authRoutes.get('/all-users', authenticateToken, authorizeAdmin, getAllUsers);
 authRoutes.delete('/delete-user', authenticateToken, authorizeAdmin, deleteUser);
 authRoutes.post('/admin-profile-edit', authenticateToken, authorizeAdmin, adminProfileEdit);
 authRoutes.post('/user-profile-edit', authenticateToken, userProfileEdit);
-authRoutes.get('/test', eitherAuthMiddleware, ((req: Request, res: Response) => {res.status(200).json({ success: true, message: "test user either"});
- return;
-}
-));
 
 export default authRoutes;
