@@ -1,4 +1,4 @@
-import express, { Response, Request } from 'express';
+import express from 'express';
 import { adminProfileEdit, deleteUser, forgotPassword, 
     getAllUsers, login, logout, refreshRequest,
     register, resendVerificationCode, resetPassword, 
