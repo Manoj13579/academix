@@ -22,5 +22,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
+  // if vite-env.d.ts in root include here
   "include": ["src", "vite-env.d.ts"]
 }
