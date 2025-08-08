@@ -260,7 +260,7 @@ const login = async (req:Request, res:Response) => {
 const forgotPassword = async (req:Request, res:Response) => {
   const {email} = req.body;
   try {
-    const user = await Users.findOne({ email });
+    const user = await Users.findOne({ email, authProvider: "jwt" });
     if(!user) {
     res.status(404).json({ success: false, message: 'user not found'});
     return;
@@ -296,6 +296,15 @@ const forgotPassword = async (req:Request, res:Response) => {
    res.status(403).json({ success: false, message: 'all fields required' });
    return;
   };
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  // Validate password using regex
+  if (!passwordRegex.test(password)) {
+    res.status(400).json({ success: false,
+      message: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.',
+    });
+    return;
+}
   try {
     const user = await Users.findOne({ email });
     if (!user) {
