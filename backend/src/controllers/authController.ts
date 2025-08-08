@@ -306,7 +306,7 @@ const forgotPassword = async (req:Request, res:Response) => {
     return;
 }
   try {
-    const user = await Users.findOne({ email });
+    const user = await Users.findOne({ email, authProvider: "jwt" });
     if (!user) {
       res.status(404).json({ success: false, message: 'user not found'});
       return;
