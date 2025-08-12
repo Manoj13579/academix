@@ -476,7 +476,14 @@ const adminProfileEdit = async (req:Request, res:Response) => {
   res.status(400).json({ success: false, message: "Password is required" });
   return;
 };
-
+ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  // Validate password using regex
+  if (!passwordRegex.test(password)) {
+    res.status(400).json({ success: false,
+      message: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.',
+    });
+    return;
+}
   try {
     /** 
      * Hash the password before updating if it is provided
@@ -488,11 +495,13 @@ const adminProfileEdit = async (req:Request, res:Response) => {
       updateData.password = hashedPassword;
     }
 
-    const data = await Users.findByIdAndUpdate(
-      _id,
+    
+    const data = await Users.findOneAndUpdate(
+      { _id, authProvider: "jwt" },
       updateData,
       { new: true }
     );
+
 
     if (!data) {
       res.status(404).json({ success: false, message: "User not found" });
@@ -521,6 +530,15 @@ if(!password) {
   res.status(400).json({ success: false, message: "Password is required" });
   return;
 };
+
+ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  // Validate password using regex
+  if (!passwordRegex.test(password)) {
+    res.status(400).json({ success: false,
+      message: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.',
+    });
+    return;
+}
   try {
     /** 
      * Hash the password before updating if it is provided
@@ -532,8 +550,9 @@ if(!password) {
       updateData.password = hashedPassword;
     }
 
-    const data = await Users.findByIdAndUpdate(
-      _id,
+    
+    const data = await Users.findOneAndUpdate(
+      { _id, authProvider: "jwt" },
       updateData,
       { new: true }
     );
